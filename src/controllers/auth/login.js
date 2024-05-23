@@ -12,7 +12,13 @@ const login = async (req, res) => {
         error: "Email ou senha inválida.",
       });
     }
-
+    const user = {
+      id: userFound.id,
+      email: userFound.email,
+      name: userFound.name,
+      perfil_image: userFound.perfil_image,
+      banner_image: userFound.banner_image,
+    };
     const passwordIsValid = await bcrypt.compare(password, userFound.password);
     if (!passwordIsValid) {
       return res.status(401).json({
@@ -42,10 +48,11 @@ const login = async (req, res) => {
 
     let date = new Date();
     date.setHours(date.getHours() - 3);
-    console.log(token)
+    console.log(token);
     return res.json({
       message: "Usuario Logado!",
       token,
+      user,
     });
   } catch (error) {
     console.log(error);
