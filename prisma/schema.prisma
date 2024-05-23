@@ -8,13 +8,14 @@ datasource db {
 }
 
 model user {
-  id           Int    @id @default(autoincrement())
-  name         String @db.VarChar(250)
-  email        String @unique @db.VarChar(250)
-  password     String @db.VarChar(72)
-  perfil_image String @default("https://cdn-icons-png.freepik.com/512/149/149071.png") @db.VarChar(1000)
-  banner_image String @default("https://www.crmv.am.gov.br/wp-content/uploads/2018/07/Fundo-transparente-1900x1900-1.png") @db.VarChar(1000)
+  id           Int     @id @default(autoincrement())
+  name         String  @db.VarChar(250)
+  email        String  @unique @db.VarChar(250)
+  password     String  @db.VarChar(72)
+  perfil_image String  @default("https://cdn-icons-png.freepik.com/512/149/149071.png") @db.VarChar(1000)
+  banner_image String  @default("https://www.crmv.am.gov.br/wp-content/uploads/2018/07/Fundo-transparente-1900x1900-1.png") @db.VarChar(1000)
   posts        post[]
+  likes        like[]
 }
 
 model post {
@@ -22,6 +23,17 @@ model post {
   body   String   @db.VarChar(1000)
   like   Int      @default(0)
   date   DateTime @default(now())
-  user   user?    @relation(fields: [author], references: [id])
-  author Int?
+  user   user    @relation(fields: [author], references: [id])
+  author Int
+  likes  like[]
+}
+
+model like {
+  userId Int
+  postId Int
+
+  user user @relation(fields: [userId], references: [id])
+  post post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
 }
