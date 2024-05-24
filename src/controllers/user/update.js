@@ -6,9 +6,11 @@ const update = async (req, res) => {
   try {
     const id = +req.params.id;
     const user = { ...req.body, id };
-    user.password = await bcrypt.hash(user.password, 10);
     const updatedUser = await userModel.update(user);
-    return res.json({ user: updatedUser });
+    return res.json({
+      success: `Usuario ${updatedUser.id} Editado com sucesso.`,
+      user: updatedUser
+    });
   } catch (error) {
     console.log(error);
     return res

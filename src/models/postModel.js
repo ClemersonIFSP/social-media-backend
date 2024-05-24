@@ -29,7 +29,7 @@ const postSchema = z.object({
 
 const create = async (post) => {
     return await prisma.post.create({
-        data: post,
+        data: { body: post.body, user: { connect: { id: post.author } } }
     });
 }
 const remove = async (id) => {
@@ -50,6 +50,14 @@ const update = async (post) => {
 
 const listOrderByDate = async () => {
     return await prisma.post.findMany({
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    perfil_image: true,
+                },
+            }
+        },
         orderBy: {
             date: 'desc',
         },
@@ -58,6 +66,14 @@ const listOrderByDate = async () => {
 
 const listOrderByLike = async () => {
     return await prisma.post.findMany({
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    perfil_image: true,
+                },
+            }
+        },
         orderBy: {
             like: 'desc',
         },
