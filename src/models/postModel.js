@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { format } from 'date-fns';
 import { z } from "zod";
-
 const prisma = new PrismaClient();
 
 const postSchema = z.object({
@@ -17,10 +17,6 @@ const postSchema = z.object({
     .max(1000, {
       message: "O corpo da postagem deve ter no máximo 1000 caracteres.",
     }),
-  like: z.number({
-    required_error: "O like é obrigatório.",
-    invalid_type_error: "O like deve ser um número inteiro.",
-  }),
   date: z.date({
     invalid_type_error: "A data deve ser uma data.",
   }),
@@ -42,16 +38,26 @@ const remove = async (id) => {
     },
   });
 };
-const update = async (post) => {
+const update = async (id, post) => {
+  const formattedDate = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
+  const date = new Date(formattedDate).toISOString();
   return await prisma.post.update({
     where: {
-      id: post.id,
+      id,
     },
-    data: post,
+    data: { ...post, date },
   });
 };
 
-const listOrderByDate = async () => {
+const getByid = async (id) => {
+  return await prisma.post.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+const listNewPosts = async () => {
   return await prisma.post.findMany({
     include: {
       user: {
@@ -67,7 +73,7 @@ const listOrderByDate = async () => {
   });
 };
 
-const listOrderByLike = async () => {
+const listOldPosts = async () => {
   return await prisma.post.findMany({
     include: {
       user: {
@@ -78,7 +84,7 @@ const listOrderByLike = async () => {
       },
     },
     orderBy: {
-      like: "desc",
+      date: "asc",
     },
   });
 };
@@ -103,7 +109,8 @@ export default {
   create,
   remove,
   update,
-  listOrderByDate,
-  listOrderByLike,
+  getByid,
+  listNewPosts,
+  listOldPosts,
   listUserPosts,
 };

@@ -3,7 +3,8 @@ import postModel from "../../models/postModel.js";
 const update = async (req, res) => {
     try {
         const post = req.body;
-        const updatedPost = await postModel.update(post);
+        const id = +req.params.id;
+        const updatedPost = await postModel.update(id, post);
         return res.json({
             success: `Postagem ${updatedPost.id} atualizada com sucesso.`,
             post: updatedPost,

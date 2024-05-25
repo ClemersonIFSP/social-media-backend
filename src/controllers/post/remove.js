@@ -2,7 +2,7 @@ import postModel from "../../models/postModel.js";
 
 const remove = async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = +parseInt(req.params.id);
         await postModel.remove(id);
         return res.json({
             success: `Postagem ${id} removida com sucesso.`,

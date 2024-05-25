@@ -1,8 +1,8 @@
 import postModel from "../../models/postModel.js";
 
-const listOrderByLike = async (req, res) => {
+const listNewPosts = async (req, res) => {
     try {
-        const posts = await postModel.listOrderByLike();
+        const posts = await postModel.listNewPosts();
         return res.json({
             success: "Postagens listadas com sucesso.",
             posts,
@@ -14,4 +14,4 @@ const listOrderByLike = async (req, res) => {
             .json({ error: "Erro interno do servidor, tente novamente!" });
     }
 };
-export default listOrderByLike;
+export default listNewPosts;

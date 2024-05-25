@@ -1,8 +1,8 @@
 import postModel from "../../models/postModel.js";
 
-const listOrderByDate = async (req, res) => {
+const listOldPosts = async (req, res) => {
     try {
-        const posts = await postModel.listOrderByDate();
+        const posts = await postModel.listOldPosts();
         return res.json({
             success: "Postagens listadas com sucesso.",
             posts,
@@ -14,4 +14,4 @@ const listOrderByDate = async (req, res) => {
             .json({ error: "Erro interno do servidor, tente novamente!" });
     }
 };
-export default listOrderByDate;
+export default listOldPosts;
