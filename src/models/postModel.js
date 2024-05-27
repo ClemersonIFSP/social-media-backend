@@ -26,6 +26,17 @@ const postSchema = z.object({
   }),
 });
 
+const validadeToCreate = (post) => {
+  const partialPostSchema = postSchema.partial({ id: true, date: true });
+  return partialPostSchema.safeParse(post);
+};
+
+const validadeToUpdate = (post) => {
+  const partialPostSchema = postSchema.partial({ date: true, author: true});
+  return partialPostSchema.safeParse(post);
+}
+
+
 const create = async (post) => {
   return await prisma.post.create({
     data: { body: post.body, user: { connect: { id: post.author } } },
@@ -49,7 +60,7 @@ const update = async (id, post) => {
   });
 };
 
-const getByid = async (id) => {
+const getById = async (id) => {
   return await prisma.post.findUnique({
     where: {
       id,
@@ -106,10 +117,12 @@ const listUserPosts = async (author) => {
 };
 
 export default {
+  validadeToCreate,
+  validadeToUpdate,
   create,
   remove,
   update,
-  getByid,
+  getById,
   listNewPosts,
   listOldPosts,
   listUserPosts,

@@ -6,6 +6,14 @@ import { SECRET_KEY, TOKEN_EXPIRES_IN } from "../../config.js";
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const result = userModel.validadeToLogin({ email, password });
+    if (!result.success) {
+      return res.status(400).json({
+        error: "Dados inválidos.",
+        fields: result.error.flatten().fieldErrors,
+      });
+    }
+
     const userFound = await userModel.getByEmail(email);
     if (!userFound) {
       return res.status(401).json({
@@ -19,6 +27,7 @@ const login = async (req, res) => {
       perfil_image: userFound.perfil_image,
       banner_image: userFound.banner_image,
     };
+
     const passwordIsValid = await bcrypt.compare(password, userFound.password);
     if (!passwordIsValid) {
       return res.status(401).json({
@@ -39,16 +48,9 @@ const login = async (req, res) => {
       }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "None",
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
     let date = new Date();
     date.setHours(date.getHours() - 3);
-    console.log(token);
+    console.log(req.cookies);
     return res.json({
       message: "Usuario Logado!",
       token,

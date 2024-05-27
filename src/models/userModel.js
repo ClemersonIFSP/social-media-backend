@@ -44,6 +44,21 @@ const userSchema = z.object({
     .max(1000, { message: "A imagem do banner deve ter no máximo 1000." }),
 });
 
+const validadeToCreate = (user) => {
+  const partialUserSchema = userSchema.partial({ id: true, perfil_image: true, banner_image: true });
+  return partialUserSchema.safeParse(user);
+};
+
+const validadeToUpdate = (user) => {
+  const partialUserSchema = userSchema.partial({ password: true });
+  return partialUserSchema.safeParse(user);
+};
+
+const validadeToLogin = (user) => {
+  const partialUserSchema = userSchema.pick({ email: true, password: true });
+  return partialUserSchema.safeParse(user);
+};
+
 const create = async (user) => {
   return await prisma.user.create({
     data: user,
@@ -75,4 +90,4 @@ const getByEmail = async (email) => {
   });
 };
 
-export default { create, remove, update, getByEmail };
+export default { validadeToCreate, validadeToUpdate, validadeToLogin, create, remove, update, getByEmail };

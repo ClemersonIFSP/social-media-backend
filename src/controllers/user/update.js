@@ -1,11 +1,16 @@
 import userModel from "../../models/userModel.js";
 
-import bcrypt from "bcrypt";
-
 const update = async (req, res) => {
   try {
     const id = +req.params.id;
     const user = { ...req.body, id };
+    const result = userModel.validadeToUpdate(user);
+    if (!result.success) {
+      return res.status(400).json({
+        error: "Dados inválidos.",
+        fields: result.error.flatten().fieldErrors
+      });
+    }
     const updatedUser = await userModel.update(user);
     return res.json({
       success: `Usuario ${updatedUser.id} Editado com sucesso.`,

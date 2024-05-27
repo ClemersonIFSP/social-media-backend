@@ -5,7 +5,13 @@ import bcrypt from "bcrypt";
 const create = async (req, res) => {
   try {
     const user = req.body;
-    console.log(user);
+    const result = userModel.validadeToCreate(user)
+    if (!result.success) {
+      return res.status(400).json({
+        error: 'Dados de Cadastro inválidos.',
+        fields: result.error.flatten().fieldErrors
+      });
+    }
     user.password = await bcrypt.hash(user.password, 10);
     const newUser = await userModel.create(user);
     return res.json({
